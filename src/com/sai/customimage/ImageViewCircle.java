@@ -15,7 +15,8 @@ import android.widget.ImageView;
 
 public class ImageViewCircle extends ImageView {
    
-	
+	private CircleConfig cirleConfig = null;
+
 	public ImageViewCircle(Context context) {
 			super(context);
 			
@@ -36,7 +37,7 @@ public class ImageViewCircle extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        BitmapDrawable drawable = (BitmapDrawable) getDrawable();
+    	BitmapDrawable drawable = (BitmapDrawable) getDrawable();
 
         if (drawable == null) {
             return;
@@ -60,11 +61,32 @@ public class ImageViewCircle extends ImageView {
        
        float radius=circleCenterX<=circleCenterY?circleCenterX:circleCenterY;
       
-       
-        canvas.drawCircle(circleCenterX, circleCenterY, radius, paint);
+       canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+       canvas.drawCircle(circleCenterX, circleCenterY, radius, paint);
+        
+       if(cirleConfig != null && cirleConfig.show){
+    	   final Paint cpaint = new Paint();
+    	   cpaint.setAntiAlias(true);
+    	   cpaint.setStrokeWidth(cirleConfig.circleWidth);
+    	   cpaint.setStyle(Paint.Style.STROKE);
+    	   cpaint.setColor(cirleConfig.circleColor);
+    	   canvas.drawCircle(circleCenterX, circleCenterY, (float)(radius-cirleConfig.circleWidth/2), cpaint);
+       }
         
     }
+    public CircleConfig getCirleConfig() {
+		return cirleConfig;
+	}
 
+	public void setCirleConfig(CircleConfig cirleConfig) {
+		this.cirleConfig = cirleConfig;
+	}
+
+	public static class CircleConfig{
+		public boolean show = false;
+		public float circleWidth = 3f;
+		public int circleColor = Color.BLUE;
+	}
     
   
 
